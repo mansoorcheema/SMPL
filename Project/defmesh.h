@@ -46,7 +46,7 @@ public:
     {
         // Eigen::VectorXd v(10);
         // v<<-5,-5,-5,-5,-5,-5,-4,-5,-5,-5;
-        updateBeta(Eigen::VectorXd::Zero(10));
+        updateBetas(Eigen::VectorXd::Zero(10));
         thetas = Eigen::VectorXd::Zero(pose_blend_shapes.cols() - 1);
         active = true;
     }
@@ -106,7 +106,7 @@ public:
     }
 
     // beta controls how much ration to pick from one of the basis blend shapes
-    void updateBeta(const Eigen::VectorXd &betas)
+    void updateBetas(const Eigen::VectorXd &betas)
     {
         beta = betas;
         shapeBlends = shape_blend_shapes * beta;
@@ -121,6 +121,25 @@ public:
             Vector3 v(regressedJoints(i, 0), regressedJoints(i, 1), regressedJoints(i, 2));
             joints.push_back(v);
         }
+    }
+
+    void incBeta(int no) 
+    {
+        Eigen::VectorXd b = beta;
+        b(no) = b(no) + 0.1;
+        updateBetas(b);
+    }
+
+    void decBeta(int no) 
+    {
+        Eigen::VectorXd b = beta;
+        b(no) = b(no) - 0.1;
+        updateBetas(b);
+    }
+
+    void resetBeta()
+    {
+        updateBetas(Eigen::VectorXd::Zero(10));
     }
 
 
@@ -266,6 +285,12 @@ public:
         updateMesh();
         return curMesh; 
     }
+
+    // Model customization using SMPL. Beta controls parameters like
+    // height, weight, muscles, etc
+    void incBeta(int no)  { smpl->incBeta(no); }
+    void decBeta(int no)  { smpl->decBeta(no); }
+    void resetBeta() { smpl->resetBeta(); }
 
     mutable vector<Vector3> match;
     vector<Eigen::Quaternionf> pose;

@@ -53,7 +53,7 @@ public:
     void clearLines() { lines.clear(); }
 
 private:
-    bool flatShading, floor, skeleton;
+    bool flatShading, floor, skeleton, betaInc;
     Transform<> transform;
     vector<DeformableMesh *> meshes;
     vector<LineSegment> lines;

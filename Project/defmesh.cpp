@@ -99,8 +99,7 @@ void DeformableMesh::updateMesh() const {
 
     curMesh = origMesh;
     for(int i = 0; i < origMesh.vertices.size(); i++) {
-        Eigen::Vector4d updatedPos;
-        updatedPos << 0,0.5,0,0;
+        Eigen::Vector4d updatedPos = Eigen::VectorXd::Zero(4);
         for(int j = 0; j < smpl->getJoints().size(); j++) {
             updatedPos += smpl->getWeights(i,j) * (smpl->G(j) * smpl->getMeshVertexCoords(i));
         }

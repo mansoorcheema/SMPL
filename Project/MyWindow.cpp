@@ -38,7 +38,7 @@ void idle(void *s)
         win->redraw();
 }
 
-MyWindow::MyWindow() : Fl_Gl_Window(1024, 768, "3D Human Mesh Animation"), flatShading(true), floor(true), skeleton(false)
+MyWindow::MyWindow() : Fl_Gl_Window(1024, 768, "3D Human Mesh Animation"), flatShading(true), floor(true), skeleton(false),betaInc(false)
 {
     size_range(20, 20, 5000, 5000);
     end();
@@ -108,6 +108,21 @@ int MyWindow::handle(int event) {
         case 'l':
             meshes[0]->toggleSMPL();
             break;
+        case 'b':
+            betaInc = !betaInc;
+            std::cout<<"Beta "<<betaInc?" Inc mode\n": "Dec mode\n";
+            break;
+
+        case '1':case '2':  case '3': case '4': case '5':case '6':case '7':  case '8': case '9':
+            {
+                int id = Fl::event_key() - '0';
+                if (betaInc)
+                    meshes[0]->incBeta(id-1);
+                else
+                    meshes[0]->decBeta(id-1);
+            break;
+            }
+
         default:
             break;
         }
@@ -269,7 +284,9 @@ void MyWindow::draw() {
 
 void MyWindow::resetTransform()
 {
-    transform = Transform<>(Quaternion<>(Vector3(1, 0, 0), .2), 1.5, Vector3(-1.66, -0.66, 0));
+    transform = Transform<>(Quaternion<>(Vector3(1, 0, 0), .2), 1.5, Vector3(-1.66, -1, 0));
+    if(!meshes.empty())
+        meshes[0]->resetBeta();
 }
 
 void MyWindow::initGL()
